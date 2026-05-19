@@ -135,7 +135,7 @@ corr = Cov_XY / (std_X * std_Y)
 print("\n" + "="*60)
 print("Задание 7: Коэффициент корреляции")
 print("="*60)
-print(f"ρ = {corr:.10f}")
+print(f"r = {corr:.10f}")
 if abs(corr) < 1e-8:
     print("  Коэффициент корреляции РАВЕН нулю.")
     if independent:
@@ -143,9 +143,8 @@ if abs(corr) < 1e-8:
     else:
         print("   Причина: отсутствие линейной зависимости (но есть нелинейная).")
 else:
-    print(f"  Коэффициент корреляции НЕ РАВЕН нулю (ρ = {corr:.6f})")
+    print(f"  Коэффициент корреляции НЕ РАВЕН нулю (r = {corr:.6f})")
 
-# ==================== 8. Уравнение регрессии ====================
 print("\n" + "="*60)
 print("Задание 8: Уравнение регрессии E(η|ξ=ξ_i)")
 print("="*60)
@@ -155,7 +154,7 @@ for i in range(len(X_values)):
     if P_X[i] > 0:
         E_Y_given_X[i] = np.sum(Y_values * P[:, i]) / P_X[i]
 
-print("  ξ_i    |  E(η|ξ=ξ_i)")
+print("  ξ_i   |  E(η|ξ=ξ_i)")
 print("  ------|-------------")
 for x, ey in zip(X_values, E_Y_given_X):
     print(f"  {x:4d}  |  {ey:.6f}")
@@ -167,13 +166,13 @@ with open('results.txt', 'w', encoding='utf-8') as f:
     f.write("Результаты расчетов по варианту 10\n")
     f.write("="*60 + "\n")
     f.write(f"Пропущенная вероятность: {missing_value:.6f}\n\n")
-    f.write(f"E[ξ] = {E_X:.6f}\n")
-    f.write(f"E[η] = {E_Y:.6f}\n")
+    f.write(f"E(ξ) = {E_X:.6f}\n")
+    f.write(f"E(η) = {E_Y:.6f}\n")
     f.write(f"D(ξ) = {D_X:.6f}\n")
     f.write(f"D(η) = {D_Y:.6f}\n")
     f.write(f"σ_ξ = {std_X:.6f}\n")
     f.write(f"σ_η = {std_Y:.6f}\n")
-    f.write(f"Корреляция ρ = {corr:.10f}\n")
+    f.write(f"Корреляция r = {corr:.10f}\n")
     f.write(f"Независимы: {independent}\n")
 
 print("\n  Результаты сохранены в 'results.txt'")
