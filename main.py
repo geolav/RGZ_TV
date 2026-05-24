@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import random
 
 
 pd.set_option('display.precision', 4)
@@ -176,3 +177,102 @@ with open('results.txt', 'w', encoding='utf-8') as f:
     f.write(f"Независимы: {independent}\n")
 
 print("\n  Результаты сохранены в 'results.txt'")
+
+
+
+print("\n" + "="*60)
+print("Блок 2: Моделирование")
+print("="*60)
+
+
+print("\nЗадание 1: Моделирование данных из распределения ξ")
+print("-"*40)
+
+
+def generate_from_discrete(values, probs):
+    r = random.random()
+    cumsum = 0
+    for val, p in zip(values, probs):
+        cumsum += p
+        if r < cumsum:
+            return val
+    return values[-1]
+
+
+n_samples = 10000
+samples = [generate_from_discrete(X_values, P_X) for _ in range(n_samples)]
+
+print(f"Сгенерировано {n_samples} значений ξ")
+print(f"Первые 20 значений: {samples[:20]}")
+print(f"Среднее выборочное: {np.mean(samples):.4f} (теоретическое: {E_X:.4f})")
+
+
+
+print("\nЗадание 2: Сравнение гистограмм")
+print("-"*40)
+
+unique, counts = np.unique(samples, return_counts=True)
+freq = counts / n_samples
+
+freq_dict = dict(zip(unique, freq))
+empirical_probs = [freq_dict.get(x, 0) for x in X_values]
+
+print("\nТаблица сравнения теоретических и эмпирических вероятностей:")
+print("  ξ     |  P(ξ) теория  |  Частота (эмпир.)  |  Разница")
+print("  ------|---------------|--------------------|---------")
+for x, p_theor, p_emp in zip(X_values, P_X, empirical_probs):
+    print(f"  {x:4d}  |    {p_theor:.4f}       |      {p_emp:.4f}        |   {abs(p_theor-p_emp):.4f}")
+
+# Сравнительная гистограмма
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+# Теоретическая гистограмма
+axes[0].bar(X_values, P_X, width=5, edgecolor='black', alpha=0.7, color='blue')
+axes[0].set_xlabel('ξ')
+axes[0].set_ylabel('P(ξ = ξ_i)')
+axes[0].set_title('Теоретическое распределение ξ')
+axes[0].grid(True, alpha=0.3)
+
+# Эмпирическая гистограмма
+axes[1].bar(X_values, empirical_probs, width=5, edgecolor='black', alpha=0.7, color='green')
+axes[1].set_xlabel('ξ')
+axes[1].set_ylabel('Относительная частота')
+axes[1].set_title(f'Эмпирическое распределение (n={n_samples})')
+axes[1].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig('comparison_hist.png', dpi=150)
+plt.show()
+
+print("\nГистограммы сохранены в 'comparison_hist.png'")
+
+print("\nЗадание 3: Зависимость среднего арифметического от n")
+print("-"*40)
+
+n_sequence = [10, 50, 100, 500, 1000, 2000, 5000, 8000, 10000]
+
+means = []
+for n in n_sequence:
+    mean_n = np.mean(samples[:n])
+    means.append(mean_n)
+
+print("\n  n_i     |  Среднее арифметическое a_i")
+print("  --------|-----------------------------")
+for n, a in zip(n_sequence, means):
+    print(f"  {n:6d}  |     {a:.6f}")
+
+plt.figure(figsize=(10, 6))
+plt.plot(n_sequence, means, 'bo-', linewidth=2, markersize=8, label='a_i = S_n / n')
+plt.axhline(y=E_X, color='red', linestyle='--', linewidth=2, label=f'Теоретическое E[ξ] = {E_X}')
+plt.xlabel('n')
+plt.ylabel('Среднее арифметическое a_i')
+plt.title('Зависимость среднего арифметического от объёма выборки')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.xscale('log')
+plt.savefig('mean_convergence.png', dpi=150)
+plt.show()
+
+print("\nГрафик сохранён в 'mean_convergence.png'")
+print(f"\nТеоретическое E[ξ] = {E_X:.6f}")
+print(f"Среднее по всей выборке (n={n_samples}) = {np.mean(samples):.6f}")
