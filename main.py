@@ -218,8 +218,8 @@ freq_dict = dict(zip(unique, freq))
 empirical_probs = [freq_dict.get(x, 0) for x in X_values]
 
 print("\nТаблица сравнения теоретических и эмпирических вероятностей:")
-print("  ξ     |  P(ξ) теория  |  Частота (эмпир.)  |  Разница")
-print("  ------|---------------|--------------------|---------")
+print("  ξ     |  P(ξ) теория    |  Частота (эмпир.)  |  Разница")
+print("  ------|-----------------|--------------------|---------")
 for x, p_theor, p_emp in zip(X_values, P_X, empirical_probs):
     print(f"  {x:4d}  |    {p_theor:.4f}       |      {p_emp:.4f}        |   {abs(p_theor-p_emp):.4f}")
 
